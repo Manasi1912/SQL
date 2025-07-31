@@ -49,6 +49,28 @@ SET discount_price = price*0.9  -- 10% discount
 WHERE product_name NOT IN ('Laptop', 'Desk')
 
 	
+-- Assign unique row numbers to each product within the same category
+SELECT product_name, category, price, 
+		ROW_NUMBER() OVER(PARTITION BY category ORDER BY price DESC) AS row_num
+FROM products;
+
+SELECT product_name, category, price, 
+		RANK() OVER(PARTITION BY category ORDER BY price DESC) AS ranking
+FROM products;
+
+SELECT product_name, category, price, 
+		DENSE_RANK() OVER(PARTITION BY category ORDER BY price DESC) AS dense_ranking
+FROM products;
+
+
+-- running sum using SUM() of price
+SELECT product_name, category, price, 
+		SUM(price) OVER(ORDER BY price) AS running_sum
+FROM products;
+-- partition by category
+SELECT product_name, category, price, 
+		SUM(price) OVER(PARTITION BY category ORDER BY price) AS running_sum
+FROM products;
 /* COALESCE FUNCTION */
 SELECT product_name, price, discount_price, 
 	COALESCE (discount_price, price) AS Final_price
